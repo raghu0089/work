@@ -1,7 +1,7 @@
 import requests  
 from lxml import html
 from urlparse import urlparse
-import re
+
 
 word=(raw_input("Enter your input : "))
 
@@ -53,14 +53,19 @@ for link in urls:
     elif domain=='http://www.snapdeal.com/':
         print "\n"
         i=0
+        element=parsed_body.xpath('//div[@class="hoverProductWrapper product-txtWrapper  "]')
         total = len(parsed_body.xpath('//div[@class="hoverProductWrapper product-txtWrapper  "]'))
         print "Snapdeal : \n" 
         while i< total:
             title  = parsed_body.xpath('//div[@class="product-title"]/a/text()')[i]
             if word.lower() in title.lower(): 
                 price  = parsed_body.xpath('//a[@id="prodDetails"]/div[@class="product-price"]/div/span[@id="price"]/text()')[i]
-                rating  = parsed_body.xpath('//a[@id="prodDetails"]/div[@class="ratingsWrapper"]/div[@class="ratingStarsSmall"]/@ratings')[i]
-                print title.replace('\n','').replace('\t','')+'-'+rating+'-'+price
+                check_rating  = element[i].xpath('.//a[@id="prodDetails"]/div[@class="ratingsWrapper"]/div[@class="ratingStarsSmall"]/@ratings')
+                if not check_rating:
+                    print title.replace('\n','').replace('\t','')+'-'+'Not Available'+'-'+price
+                else:
+                    print title.replace('\n','').replace('\t','')+'-'+check_rating[0]+'-'+price
+               
             i=i+1
                         
                         
